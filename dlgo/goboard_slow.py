@@ -38,3 +38,48 @@ class Move():
     @classmethod
     def resign(cls):
         return Move(is_resign = True)
+
+
+# We'll keep track of groups of connected stones of the same color and their
+# liberties at the same time. Doing so is much more efficient when implementing
+# game logic. We call a group of connected stones of the same color a string.
+# We can build this structure efficiently with the Python set type.
+
+# Go strings are a chain of connected stones of the same color.
+class GoString():
+
+    def __init__(self, color, stones, liberties):
+        self.color = color
+        self.stones = set(stones)
+        self.liberties = set(liberties)
+
+    # Removes a liberty from the string
+    def remove_liberty(self, point):
+        self.liberties.remove(point)
+
+    # Adds a liberty to the string
+    def add_liberty(self, point):
+        self.liberties.add(point)
+
+    # Returns a new Go string containing all stones in both strings
+    def merged_with(self, go_string):
+        # Check tha both strings belong to the same player
+        assert go_string.color == self.color
+        combined_stones = self.stones | go_string.stones
+        return GoString(
+            self.color,
+            combined_stones,
+            (self.liberties | go_string.liberties) - combined_stones)
+
+    # Counts the number of liberties within the go string
+    @property
+    def num_liberties(self):
+        return len(self.liberties)
+
+    # Checks if two go strings are the same by comparing colors, stones and
+    # liberties
+    def __eq__(self, other):
+        return isinstance(other, GoString) and \
+            self.color == other.color and \
+            self.stones == other.stones and \
+            self.liberties == other.liberties
