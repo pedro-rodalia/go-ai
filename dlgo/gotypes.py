@@ -2,7 +2,7 @@ from collections import namedtuple
 import enum
 
 # Black abd white players take turns in Go, and we use enum to represent the
-# different colored stones. A Player is either black or white.
+# different colored stones. A Player is either black or white
 class Player(enum.Enum):
     black = 1
     white = 2
