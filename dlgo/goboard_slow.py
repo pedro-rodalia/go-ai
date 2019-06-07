@@ -189,3 +189,111 @@ class Board():
                     neighbour_string.add_liberty(point)
             # Clear the point within the grid
             self._grid[point] = None
+
+
+# GameState knows about the board position, the next payer, the previous game
+# state, and the last move that has been played
+class GameState():
+
+    # Initializes the GameState using params
+    def __init__(self, board, next_player, previous, move):
+        self.board = board
+        self.next_player = next_player
+        self.previous_state = previous
+        self.last_move = move
+
+    # Returns the new GameState after applying the move
+    def apply_move(self, move):
+        # If the move implies changes
+        if move.is_play
+            # Duplicate the board to keep the previous state
+            next_board = copy.deepcopy(self.board)
+            # place the stone from the player on the point
+            next_board.place_stone(self.next_player, move.point)
+        else:
+            # Else use the same board state
+            next_board = self.board
+        # Return GameState with the new board and the other player
+        return GameState(next_board, self.next_player.other, self, move)
+
+    # Method used to start a new game
+    @classmethod
+    def new_game(cls, board_size):
+        if isinstance(board_size, int):
+            board_size = (board_size, board_size)
+        board = Board(*board_size)
+        return GameState(board, Player.black, None, None)
+
+    # Method used to decide when a game is over
+    def is_over(self):
+        # If last move was
+        if self.last_move is None:
+            return False
+        # If last move was resign, return true as the game is over
+        if self.last_move.is_resign:
+            return True
+        # Save last move from previous state
+        second_last_move = self.previous_state.last_move
+        if second_last_move is None:
+            return False
+        # If both last and second last moves are pass, end the game
+        return self.last_move.is_pass and second_last_move.is_pass
+
+    # Enforcing the self-capture rule by applying the move to a copy of the
+    # board and checking the number of liberties afterwards
+    def is_move_self_capture(self, player, move):
+        # If the game is not a play, return False
+        if not move.is_play:
+            return False
+        # Get a new board where the play will be applied
+        next_board = copy.deepcopy(self.board)
+        # Apply the play and check if is a valid play
+        next_board.place_stone(player, move.point)
+        # Get the string that forms the newly played stone
+        new_string = next_board.get_go_string(move.point)
+        # If the string has no liberties return True, else return False
+        return new_string.num_liberties == 0
+
+    # The rule for preventing kos will be that a player may not play a stone
+    # that would recreate a previous game state, where the game state includes
+    # both the stones on the board and the player whose turn is next. Because
+    # each GameState instance keeps a pointer to the previous state, we can
+    # enforce the ko rule by walking back up the tree and checking the new
+    # state against the whole history
+    @property
+    def situation(self):
+        return (self.next_player, self.board)
+
+    def does_move_violate_ko(self, player, move):
+        # If the game is not a play, return False
+        if not move.is_play:
+            return False
+        # Get a new board where the play will be applied
+        next_board = copy.deepcopy(self.board)
+        # Apply the play and save the 'next' situation
+        next_board.place_stone(player, move.point)
+        next_situation = (player.other, next_board)
+        past_state = self.previous_state
+        # Check if the situation has happened before
+        while past_state is not None:
+            if past_state.situation == next_situation:
+                return True
+            past_state = past_state.previous_state
+        return False
+
+    # Decide whether a move is valid by using knowledge from both ko and
+    # self capture
+    def is_valid_move(self, move):
+        # If the game is already over return False
+        if self.is_over():
+            return False
+        # For any of these moves, the ko or self-capture can't happen
+        if move.is_pass or move.is_resign:
+            return True
+        return (
+            # The point we try to set a stone into is empty
+            self.board.get(move.point) is None and
+            # Doesn't violate the self capture rule
+            not self.is_move_self_capture(self.next_player, move) and
+            # Doesn't violate the ko rule
+            not self.does_move_violate_ko(self.next_player, move))
