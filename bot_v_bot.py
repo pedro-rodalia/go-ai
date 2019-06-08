@@ -1,6 +1,6 @@
 from dlgo import gotypes
 from dlgo.agent.naive import RandomBot
-from dlgo import goboard_slow as goboard
+from dlgo import goboard as goboard
 from dlgo.utils import print_board, print_move
 import time
 
@@ -20,7 +20,7 @@ def main():
     # fast to observe
     while not game.is_over():
         time.sleep(0.1)
-    
+
         # Tell the bot to select a move
         bot_move = bots[game.next_player].select_move(game)
 
