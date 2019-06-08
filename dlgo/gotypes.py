@@ -23,6 +23,8 @@ class Player(enum.Enum):
 # A named tuple lets us access the coordinates as point.row and point.col
 # instead of point[0] and point[1], which makes for much better readability
 class Point(namedtuple('Point', 'row col')):
+
+    # Returns neighbours
     def neighbours(self):
         doc = "Returns the four neighbours of a Point instance"
         return [
@@ -30,4 +32,14 @@ class Point(namedtuple('Point', 'row col')):
             Point(self.row + 1, self.col), # Bottom
             Point(self.row, self.col - 1), # Left
             Point(self.row, self.col + 1), # Right
+        ]
+
+    # Returns diagonals
+    def diagonals(self):
+        doc = "Returns the four diagonals of a Point instance"
+        return [
+            Point(self.row - 1, self.col - 1 ), # Top
+            Point(self.row + 1, self.col - 1 ), # Bottom
+            Point(self.row - 1, self.col + 1), # Left
+            Point(self.row + 1, self.col + 1), # Right
         ]
