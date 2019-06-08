@@ -33,3 +33,9 @@ def print_board(board):
             line.append(STONE_TO_CHAR[stone])
         print('%s%d %s' % (bump, row, ''.join(line)))
     print('    ' + '  '.join(COLS[:board.num_cols]))
+
+# Utility function that help us read coordinates from human input
+def point_from_coords(coords):
+    col = COLS.index(coords[0]) + 1
+    row = int(coords[1:])
+    return gotypes.Point(row = row, col = col)
