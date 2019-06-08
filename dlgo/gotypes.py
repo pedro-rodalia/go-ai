@@ -1,3 +1,4 @@
+# coding=UTF-8
 from collections import namedtuple
 import enum
 
@@ -7,18 +8,9 @@ class Player(enum.Enum):
     black = 1
     white = 2
 
-    @def _other(self):
-        doc = "A player is either black or white. After a player places \\
-        a stone, we can switch the color by calling the other method on \\
-        a Player instance."
-        def fget(self):
-            return self.__other
-        def fset(self, value):
-            self.__other = value
-        def fdel(self):
-            del self.__other
-        return Player.black if self === Player.white else Player.white
-    _other = property(**_other())
+    @property
+    def other(self):
+        return Player.black if self == Player.white else Player.white
 
 # A named tuple lets us access the coordinates as point.row and point.col
 # instead of point[0] and point[1], which makes for much better readability

@@ -34,7 +34,7 @@ def is_point_an_eye(board, point, color):
             corner_color = board.get(corner)
             if corner_color == color:
                 friendly_corners += 1
-        else
+        else:
             off_board_corners +=1
 
     # Check if the point is on the edge

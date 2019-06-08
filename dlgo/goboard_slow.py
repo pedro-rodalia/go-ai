@@ -31,7 +31,7 @@ class Move():
 
     # This move passes
     @classmethod
-    def pass(cls):
+    def pass_turn(cls):
         return Move(is_pass = True)
 
     # This move resigns the current game
@@ -96,7 +96,7 @@ class Board():
     def __init__(self, num_rows = 19, num_cols = 19):
         self.num_rows = num_rows
         self.num_cols = num_cols
-        self.grid = {}
+        self._grid = {}
 
     # Board method used for placing stones
     def place_stone(self, player, point):
@@ -175,7 +175,7 @@ class Board():
     # removing an enemy string
     def _remove_string(self, string):
         # For each point which belonged to the string
-        for point in strings.stones:
+        for point in string.stones:
             # For each neighbour of this point
             for neighbour in point.neighbours():
                 # Get the string that contains this neighbour
@@ -205,7 +205,7 @@ class GameState():
     # Returns the new GameState after applying the move
     def apply_move(self, move):
         # If the move implies changes
-        if move.is_play
+        if move.is_play:
             # Duplicate the board to keep the previous state
             next_board = copy.deepcopy(self.board)
             # place the stone from the player on the point

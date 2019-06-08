@@ -7,7 +7,7 @@ COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {
     None: ' · ',
     gotypes.Player.black: ' X ',
-    gotypes.Player.white: ' O '.
+    gotypes.Player.white: ' O '
 }
 
 # Print function that prints out the next move to the command line

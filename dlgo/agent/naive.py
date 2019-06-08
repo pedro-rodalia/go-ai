@@ -26,6 +26,6 @@ class RandomBot(Agent):
                     candidates.append(candidate)
         # If there are no candidates, pass
         if not candidates:
-            return move.pass_turn()
+            return Move.pass_turn()
         # Else choose randomly among all the candidate
         return Move.play(random.choice(candidates))
