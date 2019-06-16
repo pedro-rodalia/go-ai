@@ -43,3 +43,34 @@ def is_point_an_eye(board, point, color):
         return off_board_corners + friendly_corners == 4
     # Else return True if friendly corners is greater or equal than 3
     return friendly_corners >= 3
+
+
+# A position evaluation function captures the sense of whether the agent is
+# wining or loosing by calculating certain metrics. We will implement a basic
+# position evaluation function so we can implement depth pruning allowing our
+# bot to be stronger than the naive bot. This first position evaluation function
+# works by adding calculating the difference in the count of stones.
+def capture_diff(game_state):
+    # Store stones from each player
+    black_stones = 0
+    white_stones = 0
+    # Iterate through the board and count stones for each player
+    for r in range(1, game_state.baord.num_rows + 1):
+        for c in range(1, game_state.board.num_cols + 1):
+            # Create a point for this position
+            point = gotypes.Point(r, c)
+            # Get the color of said point
+            color = game_state.board.get(p)
+            # Store the count
+            if color == gotypes.Player.black:
+                black_stones += 1
+            else if color == gotypes.Player.white:
+                white_stones += 1
+    # Get the difference
+    diff = black_stones - white_stones
+    # If it's black's move return black_stones - white_stones
+    if game_state.next_player == gotypes.Player.black:
+        return diff
+    # If it's white's move return white_stones - black_stones
+    else:
+        return -1 * diff
