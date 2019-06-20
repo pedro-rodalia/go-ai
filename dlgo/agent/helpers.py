@@ -74,3 +74,41 @@ def capture_diff(game_state):
     # If it's white's move return white_stones - black_stones
     else:
         return -1 * diff
+
+# This functions implements depth prunning similarly to how the minimax code
+# does. Here instead of returning a win/lose/draw enum, we return a number
+# indicating the value of our board evaluation function. Our convention is that
+# the score is from the perspective of the player who has the next turn: a large
+# score means the player who has the next move expects to win. When we evaluate
+# the board from our opponent's perspective, we multiply the score by -1 to flip
+# back to our perspective.
+# The max_depth parameter controls the number of moves we want to search ahead.
+# At each turn, we subtract 1 from this value.
+# When max_depth hits 0, we stop searching and call our board evaluation
+# function.
+def best_result(game_state, max_depth, eval_fn):
+    # If the game is already over we already know who the winner is
+    if game_state.is_over():
+        if game_state.winner() == game_state.next_player:
+            return MAX_SCORE
+        else:
+            return MIN_SCORE
+    # If we have reached the maximum depth, we run our evaluation function
+    if max_depth == 0:
+        return eval_fn(game_state)
+    # Best result starts as the worse case
+    best_so_far = MIN_SCORE
+    # Loop over all possible moves
+    for candidate_move in game_state.legal_moves():
+        # Make the move and see what the board would look like
+        next_state = game_state.apply_move(candidate_move)
+        # Recursively run this fn to see the best result for the oponent
+        opponent_best_outcome = best_result(next_state, max_depth - 1, eval_fn)
+        # Our outcome would be the opposite
+        our_outcome = -1 * opponent_best_outcome
+        # If our result is better than any other result evaluated to this moment
+        if our_outcome > best_so_far:
+            # Save it
+            best_so_far = our_outcome
+    # Return best result so far after having evaluated all situations
+    return best_so_far
